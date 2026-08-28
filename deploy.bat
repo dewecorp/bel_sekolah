@@ -12,6 +12,7 @@ REM ============================================
 set PROJECT_DIR=%~dp0
 set BACKUP_FILE=bel_sekolah_backup.zip
 set GIT_REMOTE=https://github.com/dewecorp/bel_sekolah.git
+set GIT_BRANCH=master
 
 cd /d "%PROJECT_DIR%"
 
@@ -57,10 +58,10 @@ REM ============================================
 REM 3. GIT PUSH
 REM ============================================
 echo [3/5] Pushing to GitHub...
-git push %GIT_REMOTE% main
+git push %GIT_REMOTE% %GIT_BRANCH%
 if errorlevel 1 (
     echo WARNING: Push failed. Trying to set upstream...
-    git push -u %GIT_REMOTE% main
+    git push -u %GIT_REMOTE% %GIT_BRANCH%
     if errorlevel 1 (
         echo ERROR: Push failed. Check credentials/connection.
         pause
@@ -115,7 +116,7 @@ echo Project: %PROJECT_DIR%
 echo Git Remote: %GIT_REMOTE%
 echo Backup: %BACKUP_FILE%
 if defined BACKUP_SIZE echo Backup Size: %BACKUP_SIZE% bytes
-echo Branch: 
+echo Branch: %GIT_BRANCH%
 git branch --show-current
 echo Last Commit:
 git log -1 --oneline
