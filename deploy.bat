@@ -80,20 +80,19 @@ if exist "%BACKUP_FILE%" del /q "%BACKUP_FILE%"
 
 echo Creating backup zip...
 
-REM Write PowerShell script to temp file
-echo $ErrorActionPreference = 'Stop' > "%TEMP%\zip_backup.ps1"
-echo Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^ >> "%TEMP%\zip_backup.ps1"
-echo  -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache', 'Thumbs.db', 'desktop.ini') >> "%TEMP%\zip_backup.ps1"
-echo Write-Host 'Backup created successfully.' >> "%TEMP%\zip_backup.ps1"
-
-powershell -NoProfile -ExecutionPolicy Bypass -File "%TEMP%\zip_backup.ps1"
-
-if errorlevel 1 (
-    echo WARNING: PowerShell zip failed, trying 7zip...
-    if exist "C:\Program Files\7-Zip\7z.exe" (
-        "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -x!*.bat -x!*.zip -x!.git -x!node_modules -x!vendor -x!.env* -x!*.log -x!*.tmp -x!*.cache
-    ) else (
-        echo ERROR: No zip tool available.
+REM Try 7-Zip first (most reliable on Windows)
+if exist "C:\Program Files\7-Zip\7z.exe" (
+    echo Creating backup with 7-Zip...
+    "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -x!*.bat -x!*.zip -x!.git -x!node_modules -x!vendor -x!.env* -x!*.log -x!*.tmp -x!*.cache -x!Thumbs.db -x!desktop.ini
+) else (
+    echo Trying PowerShell...
+    powershell -NoProfile -Command ^
+        "Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^
+         -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache', 'Thumbs.db', 'desktop.ini'); ^
+         Write-Host 'Backup created successfully.'"
+    
+    if errorlevel 1 (
+        echo ERROR: Both 7-Zip and PowerShell zip failed.
         pause
         exit /b 1
     )
@@ -107,9 +106,6 @@ if exist "%BACKUP_FILE%" (
     pause
     exit /b 1
 )
-
-REM Clean up temp file
-if exist "%TEMP%\zip_backup.ps1" del /q "%TEMP%\zip_backup.ps1"
 
 REM ============================================
 REM 5. SUMMARY
