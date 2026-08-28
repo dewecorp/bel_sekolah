@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Blokir akses langsung ke folder internal via URL
+    RewriteRule ^core/ - [F,L]
+    RewriteRule ^models/ - [F,L]
+    RewriteRule ^controllers/ - [F,L]
+    RewriteRule ^views/ - [F,L]
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^sql/ - [F,L]
+    RewriteRule ^storage/audio$ - [F,L]
+    RewriteRule ^.*\.sql$ - [F,L]
+    RewriteRule ^.*\.(env|log)$ - [F,L]
+</IfModule>
+
+<FilesMatch "\.(sql|env|log)$">
+    Require all denied
+</FilesMatch>
