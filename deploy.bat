@@ -79,16 +79,15 @@ REM Delete existing backup
 if exist "%BACKUP_FILE%" del /q "%BACKUP_FILE%"
 
 echo Creating backup zip...
-powershell -Command ^
-    "$ErrorActionPreference = 'Stop'; ^
-     Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^
+powershell -NoProfile -Command ^
+    "Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^
      -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache', 'Thumbs.db', 'desktop.ini'); ^
      Write-Host 'Backup created successfully.'"
 
 if errorlevel 1 (
     echo WARNING: PowerShell zip failed, trying 7zip...
     if exist "C:\Program Files\7-Zip\7z.exe" (
-        "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -xr!*.bat -xr!*.zip -xr!.git* -xr!node_modules* -xr!vendor* -xr!.env* -xr!*.log -xr!*.tmp -xr!*.cache
+        "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -xr!*.bat -xr!*.zip -xr!.git -xr!node_modules -xr!vendor -xr!.env* -xr!*.log -xr!*.tmp -xr!*.cache
     ) else (
         echo ERROR: No zip tool available.
         pause
