@@ -125,7 +125,7 @@ if exist "C:\Program Files\7-Zip\7z.exe" (
 
 if exist "%BACKUP_FILE%" (
     for %%F in ("%BACKUP_FILE%") do set BACKUP_SIZE=%%~zF
-    echo Backup created: %BACKUP_FILE% (!BACKUP_SIZE! bytes)
+    echo Backup created: %BACKUP_FILE% (!BACKUP_SIZE! bytes^)
 ) else (
     echo ERROR: Backup creation failed.
     pause
