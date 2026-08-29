@@ -112,17 +112,15 @@ echo Creating backup zip...
 REM Try 7-Zip first (most reliable on Windows)
 if exist "C:\Program Files\7-Zip\7z.exe" (
     echo Creating backup with 7-Zip...
-    setlocal disabledelayedexpansion
-    "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -x!*.bat -x!*.zip -x!.git -x!node_modules -x!vendor -x!.env* -x!*.log -x!*.tmp -x!*.cache -x!Thumbs.db -x!desktop.ini
-    endlocal
+    "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -x@exclude.zlist
 ) else (
     echo Trying PowerShell...
-    setlocal disabledelayedexpansion
-    powershell -NoProfile -Command ^
-        "Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^
-         -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache'); ^
-         Write-Host 'Backup created successfully.'"
-    endlocal
+    powershell -NoProfile -Command "Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal -Exclude '*.bat','*.zip','.git*','node_modules*','vendor*','.env*','*.log','*.tmp','*.cache','Thumbs.db','desktop.ini'"
+    if errorlevel 1 (
+        echo ERROR: Neither 7-Zip nor PowerShell could be used.
+        pause
+        exit /b 1
+    )
 )
 
 if exist "%BACKUP_FILE%" (

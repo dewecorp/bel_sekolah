@@ -1,0 +1,11 @@
+*.bat
+*.zip
+.git
+node_modules
+vendor
+.env*
+*.log
+*.tmp
+*.cache
+Thumbs.db
+desktop.ini
