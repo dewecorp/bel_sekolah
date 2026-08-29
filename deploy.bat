@@ -112,19 +112,17 @@ echo Creating backup zip...
 REM Try 7-Zip first (most reliable on Windows)
 if exist "C:\Program Files\7-Zip\7z.exe" (
     echo Creating backup with 7-Zip...
+    setlocal disabledelayedexpansion
     "C:\Program Files\7-Zip\7z.exe" a -tzip "%BACKUP_FILE%" * -x!*.bat -x!*.zip -x!.git -x!node_modules -x!vendor -x!.env* -x!*.log -x!*.tmp -x!*.cache -x!Thumbs.db -x!desktop.ini
+    endlocal
 ) else (
     echo Trying PowerShell...
+    setlocal disabledelayedexpansion
     powershell -NoProfile -Command ^
         "Compress-Archive -Path * -DestinationPath '%BACKUP_FILE%' -Force -CompressionLevel Optimal ^
-         -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache', 'Thumbs.db', 'desktop.ini'); ^
+         -Exclude @('*.bat', '*.zip', '.git*', 'node_modules*', 'vendor*', '.env*', '*.log', '*.tmp', '*.cache'); ^
          Write-Host 'Backup created successfully.'"
-    
-    if errorlevel 1 (
-        echo ERROR: Both 7-Zip and PowerShell zip failed.
-        pause
-        exit /b 1
-    )
+    endlocal
 )
 
 if exist "%BACKUP_FILE%" (
@@ -159,5 +157,6 @@ echo ============================================
 echo  DEPLOY COMPLETE
 echo ============================================
 echo.
+echo Tekan tombol apa saja untuk menutup window...
 pause
 endlocal
