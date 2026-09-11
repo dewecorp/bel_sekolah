@@ -12,29 +12,29 @@
   </div>
 </div>
 
-<div class="grid grid-4" style="margin-bottom:1.5rem;">
-  <div class="card stat-card card-emerald">
+<div class="admin-stats animate-slide-in">
+  <div class="card stat-card">
     <div class="stat-icon stat-icon-blue"><?= App::icon('calendar', 'w-6 h-6') ?></div>
     <div>
       <div class="stat-value"><?= (int)$stats['totalSchedules'] ?></div>
       <div class="stat-label">Total Jadwal</div>
     </div>
   </div>
-  <div class="card stat-card card-amber">
+  <div class="card stat-card">
     <div class="stat-icon stat-icon-amber"><?= App::icon('bell', 'w-6 h-6') ?></div>
     <div>
       <div class="stat-value"><?= (int)$stats['totalBellTypes'] ?></div>
       <div class="stat-label">Jenis Bel</div>
     </div>
   </div>
-  <div class="card stat-card card-purple">
+  <div class="card stat-card">
     <div class="stat-icon stat-icon-purple"><?= App::icon('calendar-days', 'w-6 h-6') ?></div>
     <div>
       <div class="stat-value"><?= (int)$stats['totalHolidays'] ?></div>
       <div class="stat-label">Hari Libur</div>
     </div>
   </div>
-  <div class="card stat-card card-rose">
+  <div class="card stat-card">
     <div class="stat-icon stat-icon-red"><?= App::icon('bolt', 'w-6 h-6') ?></div>
     <div>
       <div class="stat-value <?= (int)$settings['system_active'] === 1 ? 'text-success' : 'text-danger' ?>" id="adminStatusText">
@@ -45,13 +45,13 @@
   </div>
 </div>
 
-<div class="grid grid-3" style="margin-bottom:1.5rem;">
-  <div class="card card-pad card-blue clock-card" style="grid-column:span 2;">
+<div class="admin-hero animate-slide-in">
+  <div class="card card-pad admin-clock clock-card">
     <div class="clock-day" style="margin-bottom:0.5rem;" id="adminClockDay"></div>
-    <div id="adminClock" style="font-size:clamp(4rem, 12vw, 7rem);font-weight:800;font-family:var(--font-mono);color:var(--primary);letter-spacing:3px;text-shadow:0 0 40px rgba(52,211,153,0.3);line-height:1;">--:--:--</div>
+    <div id="adminClock" style="font-size:clamp(3.2rem, 8vw, 5rem);font-weight:800;font-family:var(--font-mono);letter-spacing:3px;line-height:1;">--:--:--</div>
     <div class="clock-date" style="margin-top:0.75rem;font-size:1rem;" id="adminDate"></div>
   </div>
-  <div class="card card-pad card-emerald next-bell">
+  <div class="card card-pad admin-next next-bell">
     <div class="section-title">Bel Berikutnya</div>
     <?php
         $adminNext = $today['nextBell'] ?? null;
@@ -105,7 +105,7 @@
   </div>
 </div>
 
-<div class="card card-pad card-emerald" style="margin-bottom:1.5rem;">
+<div class="card card-pad" style="margin-bottom:1.5rem;">
   <div class="section-title">Jadwal Hari Ini</div>
   <div id="adminJadwalList">
     <?php if ($adminHoliday): ?>

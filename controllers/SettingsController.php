@@ -7,7 +7,6 @@ namespace App\Controllers;
 
 use App\Models\Audio;
 use App\Models\Settings;
-use Core\Auth;
 use Core\Controller;
 
 class SettingsController extends Controller
@@ -75,19 +74,6 @@ class SettingsController extends Controller
                 }
             } else {
                 $audioModel->unsetAllDefaults();
-            }
-        }
-
-        // Ganti password jika diminta
-        if (!empty($data['new_password'])) {
-            $result = Auth::changePassword(
-                Auth::id(),
-                $data['old_password'] ?? '',
-                $data['new_password']
-            );
-            if (!empty($result['error'])) {
-                $this->json(['error' => $result['error']], 400);
-                return;
             }
         }
 

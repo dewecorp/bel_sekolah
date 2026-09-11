@@ -98,4 +98,7 @@ $router->post('/admin/riwayat/clear', 'RiwayatController@clear');
 $router->get('/admin/pengaturan', 'SettingsController@index');
 $router->post('/admin/pengaturan', 'SettingsController@update');
 
+$router->get('/admin/password', 'AuthController@passwordPage');
+$router->post('/admin/password', 'AuthController@changePassword');
+
 $router->dispatch();

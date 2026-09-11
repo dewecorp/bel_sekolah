@@ -42,40 +42,45 @@ use Core\App;
         </div>
 
         <nav class="sidebar-nav">
+            <div class="nav-group-label">Utama</div>
             <a href="<?= App::url('/admin/dashboard') ?>" class="nav-item <?= ($activeMenu ?? '') === 'dashboard' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('chart') ?></span> Dashboard
+                <span class="nav-icon"><?= App::icon('chart') ?></span> <span>Dashboard</span>
             </a>
+            <div class="nav-group-label">Kelola Bel</div>
             <a href="<?= App::url('/admin/jadwal') ?>" class="nav-item <?= ($activeMenu ?? '') === 'jadwal' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('calendar') ?></span> Jadwal Bel
+                <span class="nav-icon"><?= App::icon('calendar') ?></span> <span>Jadwal Bel</span>
             </a>
             <a href="<?= App::url('/admin/bel') ?>" class="nav-item <?= ($activeMenu ?? '') === 'bel' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('bell') ?></span> Jenis Bel
+                <span class="nav-icon"><?= App::icon('bell') ?></span> <span>Jenis Bel</span>
             </a>
             <a href="<?= App::url('/admin/audio') ?>" class="nav-item <?= ($activeMenu ?? '') === 'audio' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('music') ?></span> Audio Bel
+                <span class="nav-icon"><?= App::icon('music') ?></span> <span>Audio Bel</span>
             </a>
             <a href="<?= App::url('/admin/libur') ?>" class="nav-item <?= ($activeMenu ?? '') === 'libur' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('calendar-days') ?></span> Hari Libur
+                <span class="nav-icon"><?= App::icon('calendar-days') ?></span> <span>Hari Libur</span>
             </a>
             <a href="<?= App::url('/admin/riwayat') ?>" class="nav-item <?= ($activeMenu ?? '') === 'riwayat' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('clipboard') ?></span> Riwayat Bel
+                <span class="nav-icon"><?= App::icon('clipboard') ?></span> <span>Riwayat Bel</span>
             </a>
+            <div class="nav-group-label">Sistem</div>
             <a href="<?= App::url('/admin/pengaturan') ?>" class="nav-item <?= ($activeMenu ?? '') === 'pengaturan' ? 'active' : '' ?>">
-                <span class="nav-icon"><?= App::icon('cog') ?></span> Pengaturan
+                <span class="nav-icon"><?= App::icon('cog') ?></span> <span>Pengaturan</span>
+            </a>
+            <a href="<?= App::url('/admin/password') ?>" class="nav-item <?= ($activeMenu ?? '') === 'password' ? 'active' : '' ?>">
+                <span class="nav-icon"><?= App::icon('user') ?></span> <span>Ubah Password</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <div style="padding:0 0.5rem 0.75rem;font-size:0.75rem;color:#a7f3d0;">
-                Masuk sebagai: <strong><?= htmlspecialchars($currentUser['name'] ?? 'Admin') ?></strong>
+            <div class="user-chip">
+                <div class="user-avatar"><?= strtoupper(substr(htmlspecialchars($currentUser['name'] ?? 'A'), 0, 1)) ?></div>
+                <div class="user-meta">
+                    <strong><?= htmlspecialchars($currentUser['name'] ?? 'Admin') ?></strong>
+                    <small>Administrator</small>
+                </div>
             </div>
-            <?php if (App::url('/admin/logout') !== false): ?>
-            <a href="<?= App::url('/admin/pengaturan') ?>" class="nav-item">
-                <span class="nav-icon"><?= App::icon('user') ?></span> Ubah Password
-            </a>
-            <?php endif; ?>
-            <a href="javascript:void(0)" class="nav-item" id="logoutBtn">
-                <span class="nav-icon"><?= App::icon('logout') ?></span> Logout
+            <a href="javascript:void(0)" class="nav-item logout" id="logoutBtn">
+                <span class="nav-icon"><?= App::icon('logout') ?></span> <span>Logout</span>
             </a>
         </div>
     </aside>
@@ -115,6 +120,14 @@ use Core\App;
             sb.classList.toggle('open', open);
             ov.classList.toggle('show', open);
         }
+        // Menu aktif selalu terlihat: scroll nav ke item aktif, tanpa gerakkan halaman
+        (function () {
+            var nav = document.querySelector('.sidebar-nav');
+            var active = nav ? nav.querySelector('.nav-item.active') : null;
+            if (nav && active && active.scrollIntoView) {
+                try { active.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) { nav.scrollTop = active.offsetTop - 80; }
+            }
+        })();
         document.getElementById('logoutBtn')?.addEventListener('click', async () => {
             const ok = await App.confirmDelete('Anda akan keluar dari panel admin. Lanjutkan?');
             if (ok) document.getElementById('logoutForm').submit();

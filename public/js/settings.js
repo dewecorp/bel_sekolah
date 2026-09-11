@@ -14,8 +14,6 @@
 
     var alertContainer = document.getElementById('alertContainer');
     var btnSave = document.getElementById('btnSave');
-    var togglePass = document.getElementById('togglePass');
-    var passFields = document.getElementById('passFields');
 
     var systemToggle = document.getElementById('system_toggle');
     var fSystemActive = document.getElementById('f_system_active');
@@ -29,10 +27,6 @@
     var fDuration = document.getElementById('f_duration');
     var fDefaultAudio = document.getElementById('f_default_audio');
     var btnPreviewDefault = document.getElementById('btnPreviewDefault');
-
-    var fOldPass = document.getElementById('f_old_pass');
-    var fNewPass = document.getElementById('f_new_pass');
-    var fConfirmPass = document.getElementById('f_confirm_pass');
 
     var volLabel = document.getElementById('volLabel');
 
@@ -112,46 +106,11 @@
         });
     }
 
-    togglePass.addEventListener('click', function () {
-        var hidden = passFields.classList.contains('hidden');
-        passFields.classList.toggle('hidden', !hidden);
-        togglePass.textContent = hidden ? 'Sembunyikan' : 'Tampilkan';
-    });
-
     systemToggle.addEventListener('change', function () {
         updateSystemStatus(systemToggle.checked);
     });
 
     btnSave.addEventListener('click', async function () {
-        var newPass = fNewPass.value;
-        var confirmPass = fConfirmPass.value;
-        var oldPass = fOldPass.value;
-
-        if (newPass) {
-            if (!oldPass) {
-                showAlert('Password lama wajib diisi.', 'danger');
-                return;
-            }
-            if (newPass.length < 6) {
-                showAlert('Password baru minimal 6 karakter.', 'danger');
-                return;
-            }
-            if (newPass !== confirmPass) {
-                showAlert('Konfirmasi password tidak cocok.', 'danger');
-                return;
-            }
-        }
-
-        var body = {
-            system_active: parseInt(fSystemActive.value || '0', 10)
-        };
-
-        if (newPass) {
-            body.old_password = oldPass;
-            body.new_password = newPass;
-        }
-
-        // Gunakan FormData (agar bisa upload file logo)
         var fd = new FormData();
         fd.append('school_name', fSchoolName.value.trim());
         fd.append('school_address', fSchoolAddress.value.trim());
@@ -161,8 +120,6 @@
         fd.append('bell_duration', parseInt(fDuration.value || '5', 10));
         fd.append('system_active', parseInt(fSystemActive.value || '0', 10));
         if (fDefaultAudio) { fd.append('default_audio_id', fDefaultAudio.value || '0'); }
-        fd.append('old_password', oldPass || '');
-        fd.append('new_password', newPass || '');
         var logoInput = document.getElementById('f_school_logo');
         if (logoInput && logoInput.files && logoInput.files[0]) {
             fd.append('school_logo', logoInput.files[0]);

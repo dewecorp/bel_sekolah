@@ -109,27 +109,6 @@ use Core\App; $title = 'Pengaturan'; $activeMenu = 'pengaturan'; ?>
         </div>
     </div>
 
-    <div class="card card-pad">
-        <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0;">
-            <span>Ubah Password</span>
-            <button type="button" class="btn btn-sm btn-ghost" id="togglePass">Tampilkan</button>
-        </div>
-        <div id="passFields" class="hidden" style="margin-top:1rem;">
-            <div class="form-group">
-                <label class="form-label" for="f_old_pass">Password Lama</label>
-                <input type="password" id="f_old_pass" class="form-input" autocomplete="current-password">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="f_new_pass">Password Baru</label>
-                <input type="password" id="f_new_pass" class="form-input" autocomplete="new-password">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="f_confirm_pass">Konfirmasi Password Baru</label>
-                <input type="password" id="f_confirm_pass" class="form-input" autocomplete="new-password">
-            </div>
-        </div>
-    </div>
-
     <div style="text-align:right;">
         <button type="button" id="btnSave" class="btn btn-primary btn-lg">Simpan Pengaturan</button>
     </div>

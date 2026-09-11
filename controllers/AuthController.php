@@ -59,4 +59,44 @@ class AuthController extends Controller
         Auth::logout();
         $this->redirect('/auth/login');
     }
+
+    public function passwordPage(): void
+    {
+        if (!Auth::check()) {
+            $this->redirect('/auth/login');
+        }
+        $this->view('auth/password', [], 'admin.php');
+    }
+
+    public function changePassword(): void
+    {
+        if (!Auth::check()) {
+            $this->json(['error' => 'Belum login'], 401);
+            return;
+        }
+        $data = $this->inputAll();
+        $old = $data['old_password'] ?? '';
+        $new = $data['new_password'] ?? '';
+        $confirm = $data['confirm_password'] ?? $data['new_password_confirm'] ?? '';
+
+        if (trim($old) === '') {
+            $this->json(['error' => 'Password lama wajib diisi'], 400);
+            return;
+        }
+        if (strlen($new) < 6) {
+            $this->json(['error' => 'Password baru minimal 6 karakter'], 400);
+            return;
+        }
+        if ($new !== $confirm) {
+            $this->json(['error' => 'Konfirmasi password tidak cocok'], 400);
+            return;
+        }
+
+        $result = Auth::changePassword(Auth::id(), $old, $new);
+        if (!empty($result['error'])) {
+            $this->json(['error' => $result['error']], 400);
+            return;
+        }
+        $this->json(['message' => 'Password berhasil diubah']);
+    }
 }
