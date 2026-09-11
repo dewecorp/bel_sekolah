@@ -21,10 +21,10 @@ use Core\App; $title = 'Jenis Bel'; $activeMenu = 'bel'; ?>
     }
 ?>
 
-<div class="tab tabs" id="categoryTabs">
-    <button type="button" class="tab-item active" data-category="Semua">Semua (<?= $total ?>)</button>
+<div class="tabs" id="categoryTabs">
+    <button type="button" class="tab tab-item active" data-category="Semua">Semua <span class="tab-count"><?= $total ?></span></button>
     <?php foreach ($categories as $cat): ?>
-        <button type="button" class="tab-item" data-category="<?= htmlspecialchars($cat, ENT_QUOTES) ?>"><?= htmlspecialchars($cat, ENT_QUOTES) ?> (<?= $catCounts[$cat] ?>)</button>
+        <button type="button" class="tab tab-item" data-category="<?= htmlspecialchars($cat, ENT_QUOTES) ?>"><?= htmlspecialchars($cat, ENT_QUOTES) ?> <span class="tab-count"><?= $catCounts[$cat] ?></span></button>
     <?php endforeach; ?>
 </div>
 
@@ -89,4 +89,23 @@ use Core\App; $title = 'Jenis Bel'; $activeMenu = 'bel'; ?>
 .bel-card-actions { display:flex; gap:0.5rem; }
 </style>
 
-<script src="<?= App::asset('js/bel.js') ?>"></script>
+<script src="<?= App::asset('js/bel.js') ?>?v=<?= @filemtime(__DIR__ . '/../../public/js/bel.js') ?: time() ?>"></script>
+<script>
+(function () {
+    var wrap = document.getElementById('categoryTabs');
+    if (!wrap || wrap.getAttribute('data-inline-bound') === '1') { return; }
+    wrap.setAttribute('data-inline-bound', '1');
+    wrap.addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest('.tab, .tab-item') : null;
+        if (!btn || !wrap.contains(btn)) { return; }
+        var all = wrap.querySelectorAll('.tab, .tab-item');
+        for (var i = 0; i < all.length; i++) { all[i].classList.remove('active'); }
+        btn.classList.add('active');
+        var cat = btn.getAttribute('data-category');
+        var cards = document.querySelectorAll('.bel-card[data-category]');
+        for (var k = 0; k < cards.length; k++) {
+            cards[k].style.display = (cat === 'Semua' || cards[k].getAttribute('data-category') === cat) ? '' : 'none';
+        }
+    });
+})();
+</script>

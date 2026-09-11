@@ -31,7 +31,7 @@
   };
   let SCHEDULES = window.SCHEDULES || [];
   let SYSTEM_ACTIVE = window.SYSTEM_ACTIVE || 1;
-  let BELL_DURATION = window.BELL_DURATION || 5;
+  let BELL_DURATION = window.BELL_DURATION || 20;
   let DEFAULT_VOLUME = window.DEFAULT_VOLUME || 0.8;
   let IS_HOLIDAY = window.IS_HOLIDAY || false;
   const TIMEZONE = window.TIMEZONE || 'Asia/Jakarta';
@@ -189,13 +189,39 @@
     }
   };
 
-  const playAudio = (src, volume = DEFAULT_VOLUME) => {
+  const playAudio = (src, volume = DEFAULT_VOLUME, duration = BELL_DURATION) => {
     return new Promise((resolve) => {
+      const durSec = Number(duration) > 0 ? Number(duration) : (Number(BELL_DURATION) > 0 ? Number(BELL_DURATION) : 20);
+      const endAt = Date.now() + durSec * 1000;
       const audio = new Audio(playerUrl(src));
       audio.volume = volume;
+      audio.loop = true;
+      try { audio.loop = true; } catch (e) {}
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        try { audio.pause(); } catch (e) {}
+        try { audio.src = ''; } catch (e) {}
+        resolve();
+      };
+      const keepLooping = () => {
+        if (done) return;
+        if (Date.now() >= endAt) { finish(); return; }
+        if (audio.ended || audio.paused) {
+          try { audio.currentTime = 0; audio.play().catch(() => {}); } catch (e) {}
+        }
+      };
       audio.play().catch(e => console.error('Audio play error:', e));
-      audio.addEventListener('ended', () => resolve());
-      setTimeout(() => resolve(), BELL_DURATION * 1000);
+      audio.addEventListener('ended', keepLooping);
+      audio.addEventListener('pause', () => { if (!done && Date.now() < endAt) keepLooping(); });
+      audio.addEventListener('error', () => finish());
+      const iv = setInterval(() => {
+        if (done) { clearInterval(iv); return; }
+        if (Date.now() >= endAt) { clearInterval(iv); finish(); return; }
+        keepLooping();
+      }, 500);
+      setTimeout(() => { clearInterval(iv); finish(); }, durSec * 1000 + 500);
     });
   };
 
@@ -230,8 +256,9 @@
       for (const s of schedules) {
         const fp = s.filepath || '/storage/audio/bell-default.wav';
         const volume = s.volume || DEFAULT_VOLUME;
+        const dur = s.duration || BELL_DURATION;
 
-        await playAudio(fp, volume);
+        await playAudio(fp, volume, dur);
 
         try {
           await fetch(BASE_URL + '/api/bell/log', {
@@ -271,6 +298,7 @@
     let audioSrc = null;
     let scheduleName = 'Manual';
     let playVolume = DEFAULT_VOLUME;
+    let playDuration = BELL_DURATION;
 
     try {
       const res = await fetch(BASE_URL + '/api/bell/audio');
@@ -283,12 +311,14 @@
           audioSrc = defaultAudio.filepath;
           scheduleName = defaultAudio.name || 'Manual';
           playVolume = defaultAudio.volume || DEFAULT_VOLUME;
+          playDuration = defaultAudio.duration || settings.bell_duration || BELL_DURATION;
         } else {
           const first = Array.isArray(SCHEDULES) && SCHEDULES.length > 0 ? SCHEDULES[0] : null;
           if (first) {
             audioSrc = first.filepath || '/storage/audio/bell-default.wav';
             scheduleName = first.name || 'Manual';
             playVolume = first.volume || DEFAULT_VOLUME;
+            playDuration = first.duration || settings.bell_duration || BELL_DURATION;
           } else {
             audioSrc = '/storage/audio/bell-default.wav';
           }
@@ -305,7 +335,7 @@
     btn.innerHTML = '<span>Sedang Berbunyi...</span>';
 
     try {
-      await playAudio(audioSrc, playVolume);
+      await playAudio(audioSrc, playVolume, playDuration);
 
       try {
         await fetch(BASE_URL + '/api/bell/manual', {

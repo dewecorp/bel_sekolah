@@ -97,7 +97,7 @@ use Core\App; $title = 'Riwayat Bel'; $activeMenu = 'riwayat'; ?>
 .stat-card { text-align: center; }
 .riwayat-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .riwayat-card-head h3 { margin: 0; font-size: 1.05rem; }
-.time-cell { font-weight: 600; color: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.time-cell { font-weight: 600; color: #2563eb; font-family: var(--font-mono); }
 .actions-cell { white-space: nowrap; }
 </style>
 

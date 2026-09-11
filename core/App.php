@@ -110,7 +110,7 @@ class App
             'timezone'        => 'Asia/Jakarta',
             'time_format'     => '24',
             'default_volume'  => 0.8,
-            'bell_duration'   => 5,
+            'bell_duration'   => 20,
             'system_active'   => 1,
         ];
 
@@ -133,7 +133,9 @@ class App
     {
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        return $scheme . '://' . $host;
+        $dir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+        if ($dir === '/' || $dir === '\\' || $dir === '.') { $dir = ''; }
+        return $scheme . '://' . $host . $dir;
     }
 
     public static function url(string $path = ''): string

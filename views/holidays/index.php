@@ -117,7 +117,7 @@ use Core\App; $title = 'Hari Libur'; $activeMenu = 'libur'; ?>
 .holiday-card-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
 .holiday-row { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid #e2e8f0; }
 .holiday-row:last-child { border-bottom: none; }
-.holiday-row-date { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; color: #64748b; white-space: nowrap; }
+.holiday-row-date { font-family: var(--font-mono); font-size: 0.85rem; color: #64748b; white-space: nowrap; }
 .holiday-row-name { font-weight: 500; flex: 1; }
 .holiday-row-actions { display: flex; gap: 0.5rem; white-space: nowrap; }
 </style>

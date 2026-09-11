@@ -5,6 +5,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Audio;
 use App\Models\Settings;
 use Core\Auth;
 use Core\Controller;
@@ -21,6 +22,7 @@ class SettingsController extends Controller
     {
         $this->view('settings/index', [
             'settings' => (new Settings())->getAll(),
+            'audioFiles' => (new Audio())->allWithType(),
         ], 'admin.php');
     }
 
@@ -61,6 +63,20 @@ class SettingsController extends Controller
         }
 
         $model->update($data);
+
+        // Suara bel default (dipakai bel otomatis/manual bila jadwal tanpa audio khusus)
+        if (array_key_exists('default_audio_id', $data)) {
+            $audioModel = new Audio();
+            $aid = (int) $data['default_audio_id'];
+            if ($aid > 0) {
+                if (!$audioModel->setDefault($aid)) {
+                    $this->json(['error' => 'Audio default tidak ditemukan'], 400);
+                    return;
+                }
+            } else {
+                $audioModel->unsetAllDefaults();
+            }
+        }
 
         // Ganti password jika diminta
         if (!empty($data['new_password'])) {

@@ -104,4 +104,4 @@ use Core\App; $title = 'Audio Bel'; $activeMenu = 'audio'; ?>
 .audio-card-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
 </style>
 
-<script src="<?= App::asset('js/audio.js') ?>"></script>
+<script src="<?= App::asset('js/audio.js') ?>?v=<?= @filemtime(BASE_PATH . '/public/js/audio.js') ?: time() ?>"></script>

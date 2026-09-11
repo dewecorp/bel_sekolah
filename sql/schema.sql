@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS audio_files (
     bell_type_id INT UNSIGNED NULL,
     is_default TINYINT(1) DEFAULT 0,
     volume DECIMAL(3,2) DEFAULT 0.80,
-    duration INT DEFAULT 5,
+    duration INT DEFAULT 20,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (bell_type_id) REFERENCES bell_types(id) ON DELETE SET NULL,
     INDEX idx_audio_default (is_default)
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS settings (
     timezone VARCHAR(50) DEFAULT 'Asia/Jakarta',
     time_format ENUM('12','24') DEFAULT '24',
     default_volume DECIMAL(3,2) DEFAULT 0.80,
-    bell_duration INT DEFAULT 5,
+    bell_duration INT DEFAULT 20,
     system_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

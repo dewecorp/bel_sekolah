@@ -27,6 +27,8 @@
     var fTimeFormat = document.getElementById('f_time_format');
     var fVolume = document.getElementById('f_volume');
     var fDuration = document.getElementById('f_duration');
+    var fDefaultAudio = document.getElementById('f_default_audio');
+    var btnPreviewDefault = document.getElementById('btnPreviewDefault');
 
     var fOldPass = document.getElementById('f_old_pass');
     var fNewPass = document.getElementById('f_new_pass');
@@ -74,6 +76,41 @@
         var v = parseFloat(fVolume.value || '0');
         volLabel.textContent = Math.round(v * 100) + '%';
     });
+
+    var previewAudio = null;
+    if (btnPreviewDefault) {
+        btnPreviewDefault.addEventListener('click', function () {
+            if (!fDefaultAudio) { return; }
+            var opt = fDefaultAudio.options[fDefaultAudio.selectedIndex];
+            var path = opt ? opt.getAttribute('data-filepath') : '';
+            if (!path) {
+                path = '/storage/audio/bell-default.wav';
+            }
+            try { if (previewAudio) { previewAudio.pause(); previewAudio = null; } } catch (e) {}
+            if (btnPreviewDefault.getAttribute('data-playing') === '1') {
+                btnPreviewDefault.setAttribute('data-playing', '0');
+                btnPreviewDefault.textContent = 'Preview';
+                return;
+            }
+            previewAudio = new Audio(BASE_URL + path);
+            previewAudio.volume = parseFloat(fVolume.value || '0.8');
+            btnPreviewDefault.setAttribute('data-playing', '1');
+            btnPreviewDefault.textContent = 'Stop';
+            previewAudio.addEventListener('ended', function () {
+                btnPreviewDefault.setAttribute('data-playing', '0');
+                btnPreviewDefault.textContent = 'Preview';
+            });
+            previewAudio.play().catch(function () {
+                btnPreviewDefault.setAttribute('data-playing', '0');
+                btnPreviewDefault.textContent = 'Preview';
+            });
+            setTimeout(function () {
+                try { if (previewAudio) { previewAudio.pause(); previewAudio = null; } } catch (e) {}
+                btnPreviewDefault.setAttribute('data-playing', '0');
+                btnPreviewDefault.textContent = 'Preview';
+            }, 8000);
+        });
+    }
 
     togglePass.addEventListener('click', function () {
         var hidden = passFields.classList.contains('hidden');
@@ -123,6 +160,7 @@
         fd.append('default_volume', parseFloat(fVolume.value || '0'));
         fd.append('bell_duration', parseInt(fDuration.value || '5', 10));
         fd.append('system_active', parseInt(fSystemActive.value || '0', 10));
+        if (fDefaultAudio) { fd.append('default_audio_id', fDefaultAudio.value || '0'); }
         fd.append('old_password', oldPass || '');
         fd.append('new_password', newPass || '');
         var logoInput = document.getElementById('f_school_logo');

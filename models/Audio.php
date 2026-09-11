@@ -32,4 +32,15 @@ class Audio extends BaseModel
     {
         Database::execute('UPDATE audio_files SET is_default = 0');
     }
+
+    public function setDefault(int $id): bool
+    {
+        $exists = Database::fetch('SELECT id FROM audio_files WHERE id = ?', [$id]);
+        if (!$exists) {
+            return false;
+        }
+        $this->unsetAllDefaults();
+        Database::execute('UPDATE audio_files SET is_default = 1 WHERE id = ?', [$id]);
+        return true;
+    }
 }

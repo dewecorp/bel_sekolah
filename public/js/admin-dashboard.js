@@ -10,7 +10,7 @@
 
   let SCHEDULES = Array.isArray(ADMIN_BOOT.schedules_today) ? ADMIN_BOOT.schedules_today : [];
   let SYSTEM_ACTIVE = ADMIN_BOOT.system_active === 1 ? 1 : 0;
-  let BELL_DURATION = ADMIN_BOOT.bell_duration || 5;
+  let BELL_DURATION = ADMIN_BOOT.bell_duration || 20;
   let DEFAULT_VOLUME = ADMIN_BOOT.default_volume || 0.8;
   let IS_HOLIDAY = !!ADMIN_BOOT.is_holiday;
   const TIMEZONE = window.TIMEZONE || 'Asia/Jakarta';
@@ -226,10 +226,11 @@
       }
 
       const vol = volume != null && volume !== '' ? Number(volume) : DEFAULT_VOLUME;
-      const dur = duration != null && duration !== '' ? Number(duration) : BELL_DURATION;
+      const durSec = Number(duration) > 0 ? Number(duration) : (Number(BELL_DURATION) > 0 ? Number(BELL_DURATION) : 20);
 
       const audio = new Audio(playerUrl(filepath));
       audio.volume = vol;
+      try { audio.loop = true; } catch (e) {}
       currentAudio = audio;
 
       setPlayingStatus('BERBUNYI', 'animate-bell');
@@ -240,13 +241,20 @@
       const cleanup = () => {
         if (cleaned) return;
         cleaned = true;
+        try { audio.pause(); } catch (e) {}
         if (currentAudio === audio) currentAudio = null;
         setPlayingStatus('SIAP', '');
         resolve();
       };
 
-      audio.addEventListener('ended', cleanup);
-      setTimeout(cleanup, dur * 1000);
+      audio.addEventListener('error', cleanup);
+      const iv = setInterval(() => {
+        if (cleaned) { clearInterval(iv); return; }
+        if (audio.ended || audio.paused) {
+          try { audio.currentTime = 0; audio.play().catch(() => {}); } catch (e) {}
+        }
+      }, 500);
+      setTimeout(() => { clearInterval(iv); cleanup(); }, durSec * 1000);
     });
   };
 

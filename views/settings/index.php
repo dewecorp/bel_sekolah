@@ -55,6 +55,32 @@ use Core\App; $title = 'Pengaturan'; $activeMenu = 'pengaturan'; ?>
     </div>
 
     <div class="card card-pad">
+        <h3 class="section-title">Suara Bel Default</h3>
+        <p class="text-muted" style="font-size:.82rem;margin-bottom:1rem;">Dipakai bel otomatis & manual bila jadwal tanpa audio khusus.</p>
+        <?php
+            $defId = 0;
+            foreach (($audioFiles ?? []) as $af) { if (!empty($af['is_default'])) { $defId = (int)$af['id']; break; } }
+        ?>
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="f_default_audio">Jenis Suara Bel</label>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                <select id="f_default_audio" class="form-select" style="flex:1;min-width:220px;">
+                    <option value="0">-- Suara bawaan sistem --</option>
+                    <?php foreach (($audioFiles ?? []) as $af): ?>
+                        <option value="<?= (int)$af['id'] ?>" data-filepath="<?= htmlspecialchars($af['filepath'], ENT_QUOTES) ?>" <?= (int)$af['id'] === $defId ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($af['name'], ENT_QUOTES) ?> (<?= (int)$af['duration'] ?> dtk)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="button" class="btn btn-ghost" id="btnPreviewDefault">Preview</button>
+            </div>
+            <?php if (empty($audioFiles)): ?>
+                <p class="text-muted" style="font-size:.78rem;margin-top:.5rem;">Belum ada audio. Upload dulu di menu <a href="<?= App::url('/admin/audio') ?>" style="color:var(--primary-dark);font-weight:600;">Audio Bel</a>.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="card card-pad">
         <h3 class="section-title">Pengaturan Sistem</h3>
         <div class="grid grid-2">
             <div class="form-group">

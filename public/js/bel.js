@@ -58,16 +58,26 @@
         }
     }
 
-    var tabItems = document.querySelectorAll('#categoryTabs .tab-item');
-    for (var t = 0; t < tabItems.length; t++) {
-        tabItems[t].addEventListener('click', function () {
-            for (var j = 0; j < tabItems.length; j++) {
-                tabItems[j].classList.remove('active');
+    function bindTabs() {
+        var wrap = document.getElementById('categoryTabs');
+        if (!wrap || wrap.getAttribute('data-bound') === '1') { return; }
+        wrap.setAttribute('data-bound', '1');
+        wrap.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest('.tab, .tab-item') : null;
+            if (!btn || !wrap.contains(btn)) { return; }
+            var all = wrap.querySelectorAll('.tab, .tab-item');
+            for (var j = 0; j < all.length; j++) {
+                all[j].classList.remove('active');
             }
-            this.classList.add('active');
-            activeCategory = this.getAttribute('data-category');
+            btn.classList.add('active');
+            activeCategory = btn.getAttribute('data-category');
             filterByCategory(activeCategory);
         });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindTabs);
+    } else {
+        bindTabs();
     }
 
     btnTambah.addEventListener('click', function () {

@@ -131,7 +131,7 @@ use Core\App; $title = 'Manajemen Jadwal Bel'; $activeMenu = 'jadwal'; ?>
 .mb-2 { margin-bottom: 1rem; }
 .group-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .group-header h3 { margin: 0; font-size: 1.05rem; }
-.time-cell { font-weight: 600; color: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.time-cell { font-weight: 600; color: #2563eb; font-family: var(--font-mono); }
 .schedule-name { font-weight: 500; }
 .schedule-type { font-size: 0.8rem; color: #64748b; }
 .actions-cell { white-space: nowrap; }

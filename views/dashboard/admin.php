@@ -48,7 +48,7 @@
 <div class="grid grid-3" style="margin-bottom:1.5rem;">
   <div class="card card-pad card-blue clock-card" style="grid-column:span 2;">
     <div class="clock-day" style="margin-bottom:0.5rem;" id="adminClockDay"></div>
-    <div id="adminClock" style="font-size:clamp(4rem, 12vw, 7rem);font-weight:800;font-family:'Consolas','Courier New',monospace;color:var(--primary);letter-spacing:3px;text-shadow:0 0 40px rgba(52,211,153,0.3);line-height:1;">--:--:--</div>
+    <div id="adminClock" style="font-size:clamp(4rem, 12vw, 7rem);font-weight:800;font-family:var(--font-mono);color:var(--primary);letter-spacing:3px;text-shadow:0 0 40px rgba(52,211,153,0.3);line-height:1;">--:--:--</div>
     <div class="clock-date" style="margin-top:0.75rem;font-size:1rem;" id="adminDate"></div>
   </div>
   <div class="card card-pad card-emerald next-bell">
@@ -151,4 +151,4 @@
     'is_holiday' => !empty($today['isHoliday'] ?? false),
 ])) ?>'></div>
 
-<script src="<?= App::asset('js/admin-dashboard.js') ?>"></script>
+<script src="<?= App::asset('js/admin-dashboard.js') ?>?v=<?= @filemtime(BASE_PATH . '/public/js/admin-dashboard.js') ?: time() ?>"></script>

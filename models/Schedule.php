@@ -55,7 +55,21 @@ class Schedule extends BaseModel
         if (!$onlyActive) {
             $sql = str_replace(' AND s.is_active = 1', '', $sql);
         }
-        return Database::fetchAll($sql, $params);
+        $rows = Database::fetchAll($sql, $params);
+
+        // Fallback: jadwal tanpa audio khusus pakai suara default Pengaturan
+        $def = Database::fetch('SELECT filepath, volume, duration FROM audio_files WHERE is_default = 1 LIMIT 1');
+        if ($def) {
+            foreach ($rows as &$r) {
+                if (empty($r['filepath'])) {
+                    $r['filepath'] = $def['filepath'];
+                    $r['volume'] = $def['volume'];
+                    $r['duration'] = $def['duration'];
+                }
+            }
+            unset($r);
+        }
+        return $rows;
     }
 
     public function findByDayAndTime(string $day, string $time): ?array
