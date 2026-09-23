@@ -15,23 +15,23 @@ use Core\App; $title = 'Riwayat Bel'; $activeMenu = 'riwayat'; ?>
     </div>
 </div>
 
-<div class="grid grid-4 animate-slide-in">
-    <div class="stat-card">
+<div class="grid grid-4 animate-slide-in" style="margin-bottom:1.25rem;">
+    <div class="card card-pad stat-card">
         <div class="stat-icon stat-icon-purple"><?= App::icon('clipboard', 'w-6 h-6') ?></div>
         <div class="stat-value"><?= (int) $stats['total'] ?></div>
         <div class="stat-label">Total</div>
     </div>
-    <div class="stat-card">
+    <div class="card card-pad stat-card">
         <div class="stat-icon stat-icon-green"><?= App::icon('check', 'w-6 h-6') ?></div>
         <div class="stat-value"><?= (int) $stats['berhasil'] ?></div>
         <div class="stat-label">Berhasil</div>
     </div>
-    <div class="stat-card">
+    <div class="card card-pad stat-card">
         <div class="stat-icon stat-icon-blue">🤖</div>
         <div class="stat-value"><?= (int) $stats['otomatis'] ?></div>
         <div class="stat-label">Otomatis</div>
     </div>
-    <div class="stat-card">
+    <div class="card card-pad stat-card">
         <div class="stat-icon stat-icon-amber"><?= App::icon('user', 'w-6 h-6') ?></div>
         <div class="stat-value"><?= (int) $stats['manual'] ?></div>
         <div class="stat-label">Manual</div>
@@ -97,7 +97,7 @@ use Core\App; $title = 'Riwayat Bel'; $activeMenu = 'riwayat'; ?>
 .stat-card { text-align: center; }
 .riwayat-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .riwayat-card-head h3 { margin: 0; font-size: 1.05rem; }
-.time-cell { font-weight: 600; color: #2563eb; font-family: var(--font-mono); }
+.time-cell { font-weight: 600; color: var(--primary-dark); font-family: var(--font-mono); }
 .actions-cell { white-space: nowrap; }
 </style>
 

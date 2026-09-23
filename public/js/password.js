@@ -21,6 +21,14 @@
         }
     }
 
+    var form = document.getElementById('passwordForm');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            btnSave.click();
+        });
+    }
+
     btnSave.addEventListener('click', async function () {
         var oldPass = fOld.value;
         var newPass = fNew.value;

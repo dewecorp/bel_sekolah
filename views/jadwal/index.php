@@ -131,14 +131,14 @@ use Core\App; $title = 'Manajemen Jadwal Bel'; $activeMenu = 'jadwal'; ?>
 .mb-2 { margin-bottom: 1rem; }
 .group-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .group-header h3 { margin: 0; font-size: 1.05rem; }
-.time-cell { font-weight: 600; color: #2563eb; font-family: var(--font-mono); }
+.time-cell { font-weight: 600; color: var(--primary-dark); font-family: var(--font-mono); }
 .schedule-name { font-weight: 500; }
 .schedule-type { font-size: 0.8rem; color: #64748b; }
 .actions-cell { white-space: nowrap; }
 .btn-toggle-on { background: #16a34a; color: #fff; }
 .btn-toggle-off { background: #64748b; color: #fff; }
 .tab-item { padding: 0.5rem 1rem; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; border-radius: 0.375rem; }
-.tab-item.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+.tab-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 1000; }
 .modal-backdrop.open { display: flex; align-items: center; justify-content: center; }
 .modal-backdrop[hidden] { display: none !important; }

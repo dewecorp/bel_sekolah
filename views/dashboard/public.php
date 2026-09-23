@@ -38,6 +38,9 @@ $sysActive = (int)($settings['system_active'] ?? 1) === 1 && !$pubHoliday;
       </div>
     </div>
     <div class="pub-nav-actions">
+      <button type="button" class="theme-toggle-btn" onclick="App.toggleTheme()" title="Ubah Mode Gelap/Terang">
+        <?= App::icon('moon', 'w-5 h-5') ?>
+      </button>
       <span class="status-pill <?= $sysActive ? 'status-active' : 'status-inactive' ?>" id="systemStatusPill">
         <span class="status-dot"></span><span id="statusText"><?= $pubHoliday ? 'Hari Libur' : ($sysActive ? 'Aktif' : 'Nonaktif') ?></span>
       </span>

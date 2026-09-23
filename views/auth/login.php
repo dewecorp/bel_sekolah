@@ -3,7 +3,10 @@
 use Core\App;
 $error = $error ?? null;
 ?>
-<div class="auth-card">
+<div class="auth-card" style="position:relative;">
+    <button type="button" class="theme-toggle-btn" onclick="App.toggleTheme()" style="position:absolute;top:1.25rem;right:1.25rem;" title="Ubah Mode Gelap/Terang">
+        <?= App::icon('moon', 'w-5 h-5') ?>
+    </button>
     <div class="auth-logo"><?= App::icon('bell', 'w-8 h-8') ?></div>
     <h1 class="auth-title">Bel Sekolah Digital</h1>
     <p class="auth-subtitle">Masuk ke panel administrator</p>
@@ -21,8 +24,13 @@ $error = $error ?? null;
         </div>
         <div class="form-group">
             <label class="form-label" for="password">Password</label>
-            <input class="form-input" type="password" id="password" name="password" placeholder="Masukkan password"
-                   autocomplete="current-password" required>
+            <div style="position:relative;">
+                <input class="form-input" type="password" id="password" name="password" placeholder="Masukkan password"
+                       autocomplete="current-password" required style="padding-right:2.5rem;">
+                <button type="button" id="togglePasswordBtn" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;" title="Tampilkan/Sembunyikan password">
+                    <?= App::icon('eye', 'w-5 h-5') ?>
+                </button>
+            </div>
         </div>
         <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-lg">Masuk</button>
     </form>
@@ -33,6 +41,13 @@ $error = $error ?? null;
 </div>
 
 <script>
+document.getElementById('togglePasswordBtn').addEventListener('click', function () {
+    const input = document.getElementById('password');
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    this.innerHTML = isPass ? '<?= App::icon('eye-slash', 'w-5 h-5') ?>' : '<?= App::icon('eye', 'w-5 h-5') ?>';
+});
+
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const btn = document.getElementById('loginBtn');
