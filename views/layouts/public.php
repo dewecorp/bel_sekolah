@@ -33,6 +33,6 @@ use Core\App;
         <span><strong><?= htmlspecialchars($settings['school_name']) ?></strong> &copy; <?= date('Y') ?> &mdash; Sistem Bel Sekolah Digital</span>
     </footer>
 
-    <script src="<?= App::asset('js/app.js') ?>"></script>
+    <script src="<?= App::asset('js/app.js') ?>?v=<?= @filemtime(BASE_PATH . '/public/js/app.js') ?: time() ?>"></script>
 </body>
 </html>

@@ -232,24 +232,193 @@ const App = (() => {
         updateThemeToggleIcons();
     }
 
-    // Event delegation for theme toggle buttons
+    // Event delegation for theme toggle buttons (single path, no inline onclick)
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('.theme-toggle-btn');
         if (btn) {
             e.preventDefault();
             toggleTheme();
+            return;
+        }
+        // Close floating select panel on outside click
+        if (!e.target.closest('.cs-wrap') && !e.target.closest('.cs-float')) {
+            csCloseFloat();
         }
     });
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initTheme);
-    } else {
-        initTheme();
+    // Close floating select panel on outside scroll/resize (ignore scroll inside panel)
+    window.addEventListener('scroll', (e) => {
+        if (csFloatPanel && e.target) {
+            if (e.target === csFloatPanel) return;
+            try {
+                if (csFloatPanel.contains(e.target)) return;
+                if (e.target.contains && e.target.contains(csFloatPanel)) return;
+            } catch (err) {}
+        }
+        csCloseFloat();
+    }, true);
+    window.addEventListener('resize', () => csCloseFloat());
+
+    // ----- Custom Select (rounded panel, observer-free, anti-freeze) -----
+    const CS_CHEV = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>';
+
+    function csLabelText(select) {
+        const idx = select.selectedIndex;
+        if (idx >= 0 && select.options[idx]) return select.options[idx].textContent;
+        return '— Pilih —';
     }
 
-    // Global ESC key handler for modals
+    function refreshCustomSelects(root = document) {
+        const wraps = [];
+        if (root.classList && root.classList.contains('cs-wrap')) wraps.push(root);
+        root.querySelectorAll('.cs-wrap').forEach(w => wraps.push(w));
+        wraps.forEach(wrap => {
+            const select = wrap.querySelector('select');
+            const label = wrap.querySelector('.cs-label');
+            if (!select || !label) return;
+            label.textContent = csLabelText(select);
+            const panel = (csFloatWrap === wrap && csFloatPanel) ? csFloatPanel : wrap.querySelector('.cs-panel');
+            if (panel) panel.querySelectorAll('.cs-opt').forEach(o => {
+                o.classList.toggle('sel', Number(o.dataset.idx) === select.selectedIndex);
+            });
+        });
+    }
+
+    let csFloatPanel = null;
+    let csFloatWrap = null;
+
+    function csCloseFloat() {
+        if (csFloatPanel) { try { csFloatPanel.remove(); } catch (e) {} csFloatPanel = null; }
+        if (csFloatWrap) { csFloatWrap.classList.remove('open'); csFloatWrap = null; }
+    }
+
+    function csOpenFloat(wrap, select, panel) {
+        csCloseFloat();
+        const r = wrap.querySelector('.cs-trigger').getBoundingClientRect();
+        panel.querySelectorAll('.cs-opt').forEach(o => {
+            o.classList.toggle('sel', Number(o.dataset.idx) === select.selectedIndex);
+        });
+        csFloatPanel = panel;
+        csFloatWrap = wrap;
+        panel.classList.add('cs-float');
+        panel.style.minWidth = Math.max(r.width, 180) + 'px';
+        panel.style.width = Math.max(r.width, 180) + 'px';
+        const place = () => {
+            if (!csFloatPanel) return;
+            const rr = wrap.querySelector('.cs-trigger').getBoundingClientRect();
+            const h = Math.min(230, panel.scrollHeight || 230);
+            let top = rr.bottom + 6;
+            if (top + h > window.innerHeight - 8) top = Math.max(8, rr.top - h - 6);
+            csFloatPanel.style.top = top + 'px';
+            csFloatPanel.style.left = Math.max(8, Math.min(rr.left, window.innerWidth - Math.max(rr.width, 180) - 8)) + 'px';
+        };
+        panel.style.display = 'block';
+        document.body.appendChild(panel);
+        place();
+        panel.dataset.csPlace = '1';
+        wrap.classList.add('open');
+        const sel = panel.querySelector('.cs-opt.sel');
+        if (sel && sel.scrollIntoView) { try { sel.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
+    }
+
+    function buildCustomSelect(select) {
+        if (select.dataset.csInit === '1') return;
+        select.dataset.csInit = '1';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'cs-wrap';
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'cs-trigger';
+        trigger.setAttribute('aria-haspopup', 'listbox');
+
+        const label = document.createElement('span');
+        label.className = 'cs-label';
+        label.textContent = csLabelText(select);
+
+        const chev = document.createElement('span');
+        chev.className = 'cs-chev';
+        chev.innerHTML = CS_CHEV;
+
+        trigger.appendChild(label);
+        trigger.appendChild(chev);
+
+        const panel = document.createElement('div');
+        panel.className = 'cs-panel';
+        panel.setAttribute('role', 'listbox');
+
+        const renderPanel = () => {
+            panel.innerHTML = '';
+            Array.from(select.options).forEach((opt, idx) => {
+                const o = document.createElement('div');
+                o.className = 'cs-opt' + (idx === select.selectedIndex ? ' sel' : '');
+                if (opt.disabled) o.classList.add('dis');
+                o.textContent = opt.textContent;
+                o.dataset.idx = String(idx);
+                o.setAttribute('role', 'option');
+                o.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    if (opt.disabled) return;
+                    select.selectedIndex = idx;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    refreshCustomSelects(wrap);
+                    csCloseFloat();
+                });
+                panel.appendChild(o);
+            });
+        };
+        renderPanel();
+
+        trigger.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            if (csFloatWrap === wrap && csFloatPanel) { csCloseFloat(); return; }
+            refreshCustomSelects(wrap);
+            renderPanel();
+            refreshCustomSelects(wrap);
+            csOpenFloat(wrap, select, panel);
+        });
+
+        trigger.addEventListener('keydown', (ev) => {
+            if (ev.key === 'ArrowDown' || ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                trigger.click();
+            }
+        });
+
+        select.addEventListener('change', () => refreshCustomSelects(wrap));
+
+        select.parentNode.insertBefore(wrap, select);
+        wrap.appendChild(trigger);
+        wrap.appendChild(select);
+        select.style.display = 'none';
+    }
+
+    function initCustomSelects(root = document) {
+        root.querySelectorAll('select.form-select').forEach(buildCustomSelect);
+        refreshCustomSelects(root);
+    }
+
+    // Hook: sinkronkan label custom saat skrip halaman set .value langsung
+    function syncCustomSelect(select) {
+        if (!select) return;
+        const wrap = select.closest ? select.closest('.cs-wrap') : null;
+        if (wrap) refreshCustomSelects(wrap);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => { initTheme(); initCustomSelects(); });
+    } else {
+        initTheme();
+        initCustomSelects();
+    }
+
+    // Global ESC key handler for modals + custom select
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            csCloseFloat();
             document.querySelectorAll('.modal-backdrop').forEach(mb => {
                 mb.classList.remove('open');
                 mb.hidden = true;
@@ -262,7 +431,7 @@ const App = (() => {
         toast, showAlert, api, formatTime, formatTimeFull,
         waktuTersisa, waktuTersisaTZ, timeHM, timeHMS, wallClock,
         confirm, confirmDelete, esc, btnLoading, deleteItem, Icon,
-        TOAST_ICONS, IC, toggleTheme, initTheme,
+        TOAST_ICONS, IC, toggleTheme, initTheme, syncCustomSelect, initCustomSelects,
     };
 })();
 

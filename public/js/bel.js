@@ -40,10 +40,15 @@
         editingId = null;
     }
 
+    function syncSel(el) {
+        if (window.App && App.syncCustomSelect) { try { App.syncCustomSelect(el); } catch (e) {} }
+    }
+
     function resetForm() {
         fName.value = '';
         fCategory.value = '';
         formError.hidden = true;
+        syncSel(fCategory);
     }
 
     function showError(msg) {
@@ -98,6 +103,7 @@
             editingId = this.getAttribute('data-id');
             fName.value = this.getAttribute('data-name');
             fCategory.value = this.getAttribute('data-category');
+            syncSel(fCategory);
             openModal('Edit Jenis Bel');
         });
     }

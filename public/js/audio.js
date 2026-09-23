@@ -52,6 +52,10 @@
         editingId = null;
     }
 
+    function syncSel(el) {
+        if (window.App && App.syncCustomSelect) { try { App.syncCustomSelect(el); } catch (e) {} }
+    }
+
     function resetForm() {
         fFile.value = '';
         fName.value = '';
@@ -61,6 +65,7 @@
         fDuration.value = '5';
         formError.hidden = true;
         fileGroup.style.display = '';
+        syncSel(fBellType);
     }
 
     function showError(msg) {
@@ -164,6 +169,7 @@
                 fFile.value = '';
                 fName.value = card.getAttribute('data-name');
                 fBellType.value = card.getAttribute('data-bell-type-id');
+                syncSel(fBellType);
                 fVolume.value = card.getAttribute('data-volume') || '0.8';
                 updateVolLabel();
                 fDuration.value = card.getAttribute('data-duration') || '5';

@@ -51,12 +51,18 @@
         editingId = null;
     }
 
+    function syncSel(el) {
+        if (window.App && App.syncCustomSelect) { try { App.syncCustomSelect(el); } catch (e) {} }
+    }
+
     function resetForm() {
         fDay.value = '';
         fTime.value = '';
         fName.value = '';
         fBellType.value = '';
         formError.hidden = true;
+        syncSel(fDay);
+        syncSel(fBellType);
     }
 
     function showError(msg) {
@@ -130,6 +136,8 @@
                     fName.value = row.getAttribute('data-name');
                     var bell = row.getAttribute('data-bell');
                     fBellType.value = bell ? bell.replace('#', '') : '';
+                    syncSel(fDay);
+                    syncSel(fBellType);
                     openModal('Edit Jadwal');
                 });
             }

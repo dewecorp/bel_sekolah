@@ -23,6 +23,6 @@ use Core\App;
     <div style="width:100%;display:flex;justify-content:center;">
         <?= $content ?>
     </div>
-    <script src="<?= App::asset('js/app.js') ?>"></script>
+    <script src="<?= App::asset('js/app.js') ?>?v=<?= @filemtime(BASE_PATH . '/public/js/app.js') ?: time() ?>"></script>
 </body>
 </html>
